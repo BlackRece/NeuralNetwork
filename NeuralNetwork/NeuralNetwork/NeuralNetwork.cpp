@@ -2,9 +2,11 @@
 //
 
 #include <iostream>
+#include <functional>
 #include "NeuralNetwork.h"
 #include "Perceptron.h"
 #include "Matrix.h"
+#include "NN.h"
 
 #define numInputs 2
 #define numHiddenNodes 1
@@ -13,52 +15,50 @@
 
 #define numEpochIterations 5
 
-int main()
+
+void testNeuralNetwork()
 {
-    std::cout << "Hello World!\n";
-    
-	// Populate the input layer of a neural network with random input data
-	// Create a neural network with 3 layers
-	// 1 input layer, 1 hidden layer, 1 output layer
-	// 2 nodes in the input layer, 1 nodes in the hidden layer, 1 node in the output layer
-	// Use a single artificial neuron in the hidden layer
- 
-	for (int iEpoch = 0; iEpoch < numEpochIterations; iEpoch++)
+	std::cout << "\n\nNeural Network Test\n";
+	NN nn = NN(numInputs, numHiddenNodes, numOutputs);
+	std::cout << "\n nn created with 2 inputs, 2 hidden nodes, 2 outputs\n";
+
+	double dInputs[numInputs] = { 1, 0 };
+	std::cout << "\n setting inputs to { 1, 0 }\n";
+
+	double* dOutputs = nn.feedForward(dInputs, numInputs);
+	std::cout << "\n\nfeedForward({ 1, 0 })\n";
+	for (int i = 0; i < numOutputs; i++)
 	{
-		std::vector<float> vecInputs;
-		for (int i = 0; i < numInputs; i++)
-			vecInputs.push_back(RND::Getf(-5.0f, 5.0f));
-
-		std::vector<float> vecWeights;
-		for (int i = 0; i < numInputs; i++)
-			vecWeights.push_back(RND::Getf(-5.0f, 5.0f));
-
-		std::unique_ptr<Perceptron> pPerceptron = std::make_unique<Perceptron>();
-		pPerceptron->SetInputs(vecInputs);
-		pPerceptron->SetWeights(vecWeights);
-		int iGuess = pPerceptron->GetOutput();
-
-		std::cout
-			<< "\nInputs: ";
-		for (float fInput : vecInputs)
-			std::cout << fInput << ", ";
-
-		std::cout
-			<< "\nWeights: ";
-		for (float fWeight : vecWeights)
-			std::cout << fWeight << ", ";
-
-		std::cout
-			<< "\nGuess: "
-			<< iGuess
-			<< std::endl;
+		std::cout << dOutputs[i] << std::endl;
 	}
+	dInputs[0] = 0;
+	dInputs[1] = 1;
+	dOutputs = nn.feedForward(dInputs, numInputs);
+	std::cout << "\n\nfeedForward({ 0, 1 })\n";
+	for (int i = 0; i < numOutputs; i++)
+	{
+		std::cout << dOutputs[i] << std::endl;
+	}
+	dInputs[0] = 1;
+	dInputs[1] = 1;
+	dOutputs = nn.feedForward(dInputs, numInputs);
+	std::cout << "\n\nfeedForward({ 1, 1 })\n";
+	for (int i = 0; i < numOutputs; i++)
+	{
+		std::cout << dOutputs[i] << std::endl;
+	}
+	dInputs[0] = 0;
+	dInputs[1] = 0;
+	dOutputs = nn.feedForward(dInputs, numInputs);
+	std::cout << "\n\nfeedForward({ 0, 0 })\n";
+	for (int i = 0; i < numOutputs; i++)
+	{
+		std::cout << dOutputs[i] << std::endl;
+	}
+}
 
-	std::cout
-		<< "\nPress ENTER to continue...";
-
-	std::cin;
-
+void testMatrix()
+{
 	std::cout << "\ntesting random number generator:" << rand() % RAND_MAX << std::endl;
 	std::cout << "\n\nMatrix Test";
 
@@ -72,8 +72,21 @@ int main()
 
 	std::cout << "\n\nRandom Matrix Test\n";
 
-	pMatrix1.random();
-	std::cout << "\npMatrix1.random()\n";
+	pMatrix1.random(100);
+	std::cout << "\npMatrix1.random(100)\n";
+	pMatrix1.print();
+
+	pMatrix1 = pMatrix1.mul(0.10);
+	std::cout << "\npMatrix1.mul(0.10)\n";
+	pMatrix1.print();
+
+	NN nn = NN(2, 2, 2);
+	std::function<double()> fnRandomDouble = std::bind(&NN::random, &nn, -2.0, 2.0);
+	pMatrix1.map(fnRandomDouble);
+	std::cout << "\npMatrix1.map(fnRandomDouble);\n";
+	pMatrix1.print();
+	pMatrix1 = pMatrix1.map(fnRandomDouble);
+	std::cout << "\npMatrix1 = pMatrix1.map(fnRandomDouble);\n";
 	pMatrix1.print();
 
 	std::cout << "\n\nMatrix Addition Test\n";
@@ -285,19 +298,64 @@ int main()
 	// Instantiate the neural network
 	std::unique_ptr< NeuralNetwork > neuralNetwork = std::make_unique< NeuralNetwork >(2, 1, 1);
     */
-	return 0;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void rawthoughts()
+{
+	std::cout << "Hello World!\n";
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+	// Populate the input layer of a neural network with random input data
+	// Create a neural network with 3 layers
+	// 1 input layer, 1 hidden layer, 1 output layer
+	// 2 nodes in the input layer, 1 nodes in the hidden layer, 1 node in the output layer
+	// Use a single artificial neuron in the hidden layer
+
+	for (int iEpoch = 0; iEpoch < numEpochIterations; iEpoch++)
+	{
+		std::vector<float> vecInputs;
+		for (int i = 0; i < numInputs; i++)
+			vecInputs.push_back(RND::Getf(-5.0f, 5.0f));
+
+		std::vector<float> vecWeights;
+		for (int i = 0; i < numInputs; i++)
+			vecWeights.push_back(RND::Getf(-5.0f, 5.0f));
+
+		std::unique_ptr<Perceptron> pPerceptron = std::make_unique<Perceptron>();
+		pPerceptron->SetInputs(vecInputs);
+		pPerceptron->SetWeights(vecWeights);
+		int iGuess = pPerceptron->GetOutput();
+
+		std::cout
+			<< "\nInputs: ";
+		for (float fInput : vecInputs)
+			std::cout << fInput << ", ";
+
+		std::cout
+			<< "\nWeights: ";
+		for (float fWeight : vecWeights)
+			std::cout << fWeight << ", ";
+
+		std::cout
+			<< "\nGuess: "
+			<< iGuess
+			<< std::endl;
+	}
+
+	std::cout
+		<< "\nPress ENTER to continue...";
+
+	std::cin;
+
+}
+
+int main()
+{
+	//testMatrix();
+
+	testNeuralNetwork();
+
+	return 0;
+}
 
 
 NeuralNetwork::NeuralNetwork()

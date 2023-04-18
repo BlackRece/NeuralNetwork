@@ -16,6 +16,8 @@ public:
 	
 	static void Shuffle(std::vector<int>& vInput);
 
+
+
 private:
 	int iInputLayerSize;
 	int iHiddenLayerSize;

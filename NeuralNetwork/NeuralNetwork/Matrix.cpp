@@ -21,12 +21,12 @@ double Matrix::operator()(unsigned iRows, unsigned iCols) const
 Matrix Matrix::add(const double dScalar)
 {
 	Matrix m(m_iRows, m_iCols);
-	for(int i = 0; i < m_iRows * m_iCols; i++)
+	for (int i = 0; i < m_iRows * m_iCols; i++)
 		m.m_dData[i] = m_dData[i] + dScalar;
 	return m;
 }
 
-Matrix Matrix::add(const Matrix& mSource) 
+Matrix Matrix::add(const Matrix& mSource)
 {
 	checkSize(mSource.m_iRows, mSource.m_iCols);
 	Matrix m(m_iRows, m_iCols);
@@ -38,7 +38,7 @@ Matrix Matrix::add(const Matrix& mSource)
 Matrix Matrix::mul(const double dScalar)
 {
 	Matrix m(m_iRows, m_iCols);
-	for(int i = 0; i < m_iRows * m_iCols; i++)
+	for (int i = 0; i < m_iRows * m_iCols; i++)
 		m.m_dData[i] = m_dData[i] * dScalar;
 	return m;
 }
@@ -47,7 +47,7 @@ Matrix Matrix::mul(const Matrix& mSource)
 {
 	// element-wise multiplication
 	Matrix m(m_iRows, m_iCols);
-	for(int i = 0; i < m_iRows * m_iCols; i++)
+	for (int i = 0; i < m_iRows * m_iCols; i++)
 		m.m_dData[i] = m_dData[i] * mSource.m_dData[i];
 	return m;
 }
@@ -84,6 +84,59 @@ Matrix Matrix::transpose() const
 	return m;
 }
 
+Matrix Matrix::map(const std::function<double(int, int, double)>& func)
+{
+	Matrix m(m_iRows, m_iCols);
+	for (int i = 0; i < m_iRows; i++)
+		for (int j = 0; j < m_iCols; j++)
+			m(i, j) = func(i, j, (*this)(i, j));
+	return m;
+}
+
+Matrix Matrix::map(std::function<double(double)>& func)
+{
+	Matrix m(m_iRows, m_iCols);
+	for (int i = 0; i < m_iRows; i++)
+		for (int j = 0; j < m_iCols; j++)
+			m(i, j) = func((*this)(i, j));
+	return m;
+}
+
+Matrix Matrix::map(std::function<double()>& func) {
+	Matrix m(m_iRows, m_iCols);
+	for (int i = 0; i < m_iRows; i++) {
+		for (int j = 0; j < m_iCols; j++) {
+			m(i, j) = func();
+		}
+	}
+	return m;
+}
+
+Matrix Matrix::fromArray(const double dArray[], const int iArraySize, bool bIsCol)
+{
+	Matrix m = bIsCol
+		? Matrix(1, iArraySize)
+		: Matrix(iArraySize, 1);
+
+	for (int i = 0; i < iArraySize; i++)
+	{
+		if (bIsCol)
+			m(0, i) = dArray[i];
+		else
+			m(i, 0) = dArray[i];
+	}
+
+	return m;
+}
+
+double* Matrix::toArray() const
+{
+	double* dArray = new double[m_iRows * m_iCols];
+	for (int i = 0; i < m_iRows * m_iCols; i++)
+		dArray[i] = m_dData[i];
+	return dArray;
+}
+
 void Matrix::print() const
 {
 	for (int i = 0; i < m_iRows; i++)
@@ -94,10 +147,10 @@ void Matrix::print() const
 	}
 }
 
-void Matrix::random()
+void Matrix::random(int dVal)
 {
 	for (int i = 0; i < m_iRows * m_iCols; i++)
-		m_dData[i] = rand() % 10;
+		m_dData[i] = rand() % dVal;
 }
 
 inline void Matrix::checkBounds(unsigned iRows, unsigned iCols) const
@@ -109,7 +162,7 @@ inline void Matrix::checkBounds(unsigned iRows, unsigned iCols) const
 std::valarray<double> Matrix::getRow(unsigned iRow) const
 {
 	std::valarray<double> v(m_iCols);
-	for(int i = 0; i < m_iCols; i++)
+	for (int i = 0; i < m_iCols; i++)
 		v[i] = (*this)(iRow, i);
 	return v;
 }
@@ -117,7 +170,7 @@ std::valarray<double> Matrix::getRow(unsigned iRow) const
 std::valarray<double> Matrix::getCol(unsigned iCol) const
 {
 	std::valarray<double> v(m_iRows);
-	for(int i = 0; i < m_iRows; i++)
+	for (int i = 0; i < m_iRows; i++)
 		v[i] = (*this)(i, iCol);
 	return v;
 }

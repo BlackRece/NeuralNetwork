@@ -130,12 +130,14 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="Neuron.cpp" />
+    <ClCompile Include="NN.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Activation.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="Neuron.h" />
+    <ClInclude Include="NN.h" />
     <ClInclude Include="Perceptron.h" />
     <ClInclude Include="Random.h" />
   </ItemGroup>
