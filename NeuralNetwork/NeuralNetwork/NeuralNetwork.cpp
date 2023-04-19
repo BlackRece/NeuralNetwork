@@ -15,6 +15,57 @@
 
 #define numEpochIterations 50000
 
+void testNNJsonOperations()
+{
+	std::cout << "\n\nNeural Network Test for Json Operations\n";
+	NN nn1 = NN(numInputs, numHiddenNodes, numOutputs);
+	nn1.setLearningRate(0.5);
+	double dInputs[numTrainingSets][numInputs] = {
+		{0,0},
+		{0,1},
+		{1,0},
+		{1,1}
+	};
+	double dTargets[numTrainingSets][numOutputs] = {
+		{0},
+		{1},
+		{1},
+		{0}
+	};
+
+	for (int i = 0; i < numEpochIterations; i++)
+	{
+		int index = rand() % numTrainingSets;
+		nn1.trainFeedForward(dInputs[index], numInputs, dTargets[index], numOutputs);
+	}
+
+	std::cout << "\n\n get output matrix from feed forward\n";
+	for (int i = 0; i < numTrainingSets; i++)
+	{
+		double* rawOutput = nn1.feedForward(dInputs[i], numInputs);
+		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
+		mOutputs.print();
+	}
+
+	std::cout << "\n\n save trained nn\n";
+	nn1.save("nnTest.json");
+
+	NN nn2 = NN(99,99,99);
+	std::cout << "\n\n load nn\n";
+	nn2.load("nnTest.json");
+	std::cout << "\n\n get stored learning rate: " << nn2.getLearningRate() << "\n";
+	std::cout << "\n\n get output matrix from feed forward of stored nn\n";
+
+	for (int i = 0; i < numTrainingSets; i++)
+	{
+		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
+		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
+		mOutputs.print();
+	}
+}
+
 void testTrainingForXOR()
 {
 	std::cout << "\n\nNeural Network Test for training XOR\n";
@@ -51,79 +102,79 @@ void testTrainingForXOR()
 
 void testTrainFeedForward()
 {
-	std::cout << "\n\nNeural Network Test for training from Feed Forward method\n";
-	NN nn = NN(numInputs, numHiddenNodes, numOutputs);
-	std::cout << "\n nn created with 2 inputs, 2 hidden nodes, 2 outputs\n";
+	//std::cout << "\n\nNeural Network Test for training from Feed Forward method\n";
+	//NN nn = NN(numInputs, numHiddenNodes, numOutputs);
+	//std::cout << "\n nn created with 2 inputs, 2 hidden nodes, 2 outputs\n";
 
-	double dInputs[numInputs] = { 1, 0 };
-	std::cout << "\n setting inputs to { 1, 0 }\n";
+	//double dInputs[numInputs] = { 1, 0 };
+	//std::cout << "\n setting inputs to { 1, 0 }\n";
 
-	double dTargets[numOutputs] = { 1 };
-	std::cout << "\n setting targets to { 1 }\n";
+	//double dTargets[numOutputs] = { 1 };
+	//std::cout << "\n setting targets to { 1 }\n";
 
-	double* rawOutput = nn.feedForward(dInputs, numInputs);
-	std::cout << "\n raw output from feedForward:\n";
-	for (int i = 0; i < numOutputs; i++)
-		std::cout << i << ": " << rawOutput[i] << std::endl;
+	//double* rawOutput = nn.feedForward(dInputs, numInputs);
+	//std::cout << "\n raw output from feedForward:\n";
+	//for (int i = 0; i < numOutputs; i++)
+	//	std::cout << i << ": " << rawOutput[i] << std::endl;
 
-	Matrix mOutputs, mTargets;
-	std::cout << "\n\n get output matrix from feed forward\n";
-	mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
-	mOutputs.print();
+	//Matrix mOutputs, mTargets;
+	//std::cout << "\n\n get output matrix from feed forward\n";
+	//mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+	//mOutputs.print();
 
-	std::cout << "\n convert target array to matrix\n";
-	mTargets = mTargets.fromArray(dTargets, numOutputs);
-	mTargets.print();
+	//std::cout << "\n convert target array to matrix\n";
+	//mTargets = mTargets.fromArray(dTargets, numOutputs);
+	//mTargets.print();
 
-	std::cout << "\n calculate output errors\n";
-	Matrix mOutputErrors = mTargets.sub(mOutputs);
-	mOutputErrors.print();
+	//std::cout << "\n calculate output errors\n";
+	//Matrix mOutputErrors = mTargets.sub(mOutputs);
+	//mOutputErrors.print();
 
-	std::cout << "\n pre-transposed weights:\n";
-	nn.m_mWeightsHO.print();
-	Matrix mWeightsHO_T = nn.m_mWeightsHO.transpose();
-	std::cout << "\n post-transposed weights:\n";
-	mWeightsHO_T.print();
+	//std::cout << "\n pre-transposed weights:\n";
+	//nn.m_mWeightsHO.print();
+	//Matrix mWeightsHO_T = nn.m_mWeightsHO.transpose();
+	//std::cout << "\n post-transposed weights:\n";
+	//mWeightsHO_T.print();
 
-	std::cout << "\n calculate hidden layer errors\n";
-	Matrix mHiddenErrors = mWeightsHO_T.dot(mOutputErrors);
-	mHiddenErrors.print();
+	//std::cout << "\n calculate hidden layer errors\n";
+	//Matrix mHiddenErrors = mWeightsHO_T.dot(mOutputErrors);
+	//mHiddenErrors.print();
 
-	std::cout << "\n apply sigmoid derivative to mOutputs\n";
-	std::function<double(double)> fnSigmoidDerivative = std::bind(&NN::sigmoidDerivative, &nn, std::placeholders::_1);
-	Matrix mGradients = mOutputs.map(fnSigmoidDerivative);
-	mGradients.print();
+	//std::cout << "\n apply sigmoid derivative to mOutputs\n";
+	//std::function<double(double)> fnSigmoidDerivative = std::bind(&NN::sigmoidDerivative, &nn, std::placeholders::_1);
+	//Matrix mGradients = mOutputs.map(fnSigmoidDerivative);
+	//mGradients.print();
 
-	std::cout << "\n calculate gradients with learning rate\n";
-	mGradients = mGradients.mul(mOutputErrors);
+	//std::cout << "\n calculate gradients with learning rate\n";
+	//mGradients = mGradients.mul(mOutputErrors);
 
-	double m_dLearningRate = 1.0;		// TODO: make this a member variable that starts at 0.1 and decreases over time
-	mGradients = mGradients.mul(m_dLearningRate);
-	mGradients.print();
+	//double m_dLearningRate = 1.0;		// TODO: make this a member variable that starts at 0.1 and decreases over time
+	//mGradients = mGradients.mul(m_dLearningRate);
+	//mGradients.print();
 
-	std::cout << "\n get hidden matrix with weights applied\n";
-	nn.m_mHidden.print();
+	//std::cout << "\n get hidden matrix with weights applied\n";
+	//nn.m_mHidden.print();
 
-	std::cout << "\n apply biases to hidden matrix\n";
-	Matrix mHiddenWithBias = nn.m_mHidden.add(nn.m_mBiasH);
-	mHiddenWithBias.print();
+	//std::cout << "\n apply biases to hidden matrix\n";
+	//Matrix mHiddenWithBias = nn.m_mHidden.add(nn.m_mBiasH);
+	//mHiddenWithBias.print();
 
-	std::cout << "\n transpose hidden matrix with weights and biases alread applied\n";
-	Matrix mHiddenTransposed = mHiddenWithBias.transpose();
-	mHiddenTransposed.print();
+	//std::cout << "\n transpose hidden matrix with weights and biases alread applied\n";
+	//Matrix mHiddenTransposed = mHiddenWithBias.transpose();
+	//mHiddenTransposed.print();
 
-	std::cout << "\n calculate hidden -> output weight deltas\n";
-	Matrix mWeightsHO_deltas = mGradients.dot(mHiddenTransposed);
-	mWeightsHO_deltas.print();
+	//std::cout << "\n calculate hidden -> output weight deltas\n";
+	//Matrix mWeightsHO_deltas = mGradients.dot(mHiddenTransposed);
+	//mWeightsHO_deltas.print();
 
-	std::cout << "\n apply hidden -> output weight deltas to previous hidden -> output weights";
-	std::cout << "\nnn.m_mWeightsHO.print();\n";
-	nn.m_mWeightsHO.print();
-	std::cout << "\nmAdjustedWeightsHO.print();\n";
-	Matrix mAdjustedWeightsHO = nn.m_mWeightsHO.add(mWeightsHO_deltas);
-	mAdjustedWeightsHO.print();
+	//std::cout << "\n apply hidden -> output weight deltas to previous hidden -> output weights";
+	//std::cout << "\nnn.m_mWeightsHO.print();\n";
+	//nn.m_mWeightsHO.print();
+	//std::cout << "\nmAdjustedWeightsHO.print();\n";
+	//Matrix mAdjustedWeightsHO = nn.m_mWeightsHO.add(mWeightsHO_deltas);
+	//mAdjustedWeightsHO.print();
 
-	std::cout << "\n apply sigmoid derivative to mOutputs\n";
+	//std::cout << "\n apply sigmoid derivative to mOutputs\n";
 	//Matrix mHiddenGradients = mHiddenWithBias
 }
 
@@ -467,7 +518,9 @@ int main()
 
 	//testTrainFeedForward();
 
-	testTrainingForXOR();
+	//testTrainingForXOR();
+
+	testNNJsonOperations();
 
 	return 0;
 }

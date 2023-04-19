@@ -141,6 +141,7 @@
     <ClInclude Include="NN.h" />
     <ClInclude Include="Perceptron.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="Structures.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

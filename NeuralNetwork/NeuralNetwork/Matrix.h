@@ -7,7 +7,7 @@
 #include <iostream>
 #include <functional>
 
-#include "JsonParser.h"
+#include "Structures.h"
 
 class Matrix
 {
@@ -55,8 +55,10 @@ public:
 	Matrix map(std::function<double()>& func);
 	
 	// helper functions
-	Matrix fromArray(const double dArray[], const int iArraySize, bool bIsCol = true);
 	double* toArray() const;
+	Matrix fromArray(const double dArray[], const int iArraySize, bool bIsCol = true);
+	MatrixJson toJson() const;
+	Matrix fromJson(MatrixJson json) const;
 
 	// debug functions
 	void print() const;
@@ -76,8 +78,6 @@ private:
 
 	std::valarray<double> getRow(unsigned iRow) const;
 	std::valarray<double> getCol(unsigned iCol) const;
-
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Matrix, m_iRows, m_iCols, m_dData);
 };
 
 #endif // !MATRIX_H
