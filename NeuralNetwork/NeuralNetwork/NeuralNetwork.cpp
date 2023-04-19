@@ -9,7 +9,7 @@
 #include "NN.h"
 
 #define numInputs 2
-#define numHiddenNodes 2
+#define numHiddenNodes 4
 #define numOutputs 1
 #define numTrainingSets 4
 
