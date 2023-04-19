@@ -7,6 +7,8 @@
 #include <iostream>
 #include <functional>
 
+#include "JsonParser.h"
+
 class Matrix
 {
 public:
@@ -74,6 +76,8 @@ private:
 
 	std::valarray<double> getRow(unsigned iRow) const;
 	std::valarray<double> getCol(unsigned iCol) const;
+
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Matrix, m_iRows, m_iCols, m_dData);
 };
 
 #endif // !MATRIX_H
