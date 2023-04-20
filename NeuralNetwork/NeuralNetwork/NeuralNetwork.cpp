@@ -15,6 +15,82 @@
 
 #define numEpochIterations 50000
 
+void testNNConstructor()
+{
+	std::cout << "\n\nNeural Network Test for Constructor\n";
+
+	double dInputs[numTrainingSets][numInputs] = {
+		{0,0},
+		{0,1},
+		{1,0},
+		{1,1}
+	};
+	double dTargets[numTrainingSets][numOutputs] = {
+		{0},
+		{1},
+		{1},
+		{0}
+	};
+
+	NN nn1 = NN(numInputs, numHiddenNodes, numOutputs);
+	NN nn2 = nn1.clone();
+
+	std::cout << "\n\nnn1 output\n";
+	for (int i = 0; i < numTrainingSets; i++)
+	{
+		double* rawOutput = nn1.feedForward(dInputs[i], numInputs);
+		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
+		mOutputs.print();
+	}
+
+	std::cout << "\n\nnn2 output\n";
+	for (int i = 0; i < numTrainingSets; i++)
+	{
+		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
+		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
+		mOutputs.print();
+	}
+
+	std::cout << "\n\ntrain nn2\n";
+	for (int i = 0; i < numEpochIterations; i++)
+	{
+		int index = rand() % numTrainingSets;
+		nn2.trainFeedForward(dInputs[index], numInputs, dTargets[index], numOutputs);
+	}
+
+	std::cout << "\n\nnn1 output\n";
+	for (int i = 0; i < numTrainingSets; i++)
+	{
+		double* rawOutput = nn1.feedForward(dInputs[i], numInputs);
+		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
+		mOutputs.print();
+	}
+
+	std::cout << "\n\nnn2 output\n";
+	for (int i = 0; i < numTrainingSets; i++)
+	{
+		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
+		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
+		mOutputs.print();
+	}
+
+	std::cout << "\n\nmutate nn2\n";
+	nn2.mutate(0.1);
+
+	std::cout << "\n\nnn2's mutated output\n";
+	for (int i = 0; i < numTrainingSets; i++)
+	{
+		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
+		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
+		mOutputs.print();
+	}
+}
+
 void testNNJsonOperations()
 {
 	std::cout << "\n\nNeural Network Test for Json Operations\n";
@@ -520,7 +596,9 @@ int main()
 
 	//testTrainingForXOR();
 
-	testNNJsonOperations();
+	//testNNJsonOperations();
+
+	testNNConstructor();
 
 	return 0;
 }
