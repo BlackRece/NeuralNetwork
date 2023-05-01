@@ -39,18 +39,20 @@ void testNNConstructor()
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn1.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 
 	std::cout << "\n\nnn2 output\n";
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 
 	std::cout << "\n\ntrain nn2\n";
@@ -64,18 +66,20 @@ void testNNConstructor()
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn1.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 
 	std::cout << "\n\nnn2 output\n";
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 
 	std::cout << "\n\nmutate nn2\n";
@@ -85,9 +89,10 @@ void testNNConstructor()
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 }
 
@@ -119,9 +124,10 @@ void testNNJsonOperations()
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn1.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 
 	std::cout << "\n\n save trained nn\n";
@@ -136,14 +142,16 @@ void testNNJsonOperations()
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn2.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 }
 
 void testTrainingForXOR()
 {
+	// supervised learning
 	std::cout << "\n\nNeural Network Test for training XOR\n";
 	NN nn = NN(numInputs, numHiddenNodes, numOutputs);
 
@@ -170,9 +178,10 @@ void testTrainingForXOR()
 	for (int i = 0; i < numTrainingSets; i++)
 	{
 		double* rawOutput = nn.feedForward(dInputs[i], numInputs);
-		Matrix mOutputs = mOutputs.fromArray(rawOutput, numOutputs);
+		Matrix* mOutputs{};
+		mOutputs = mOutputs->fromArray(rawOutput, numOutputs);
 		std::cout << "\n" << i << ": (target = " << dTargets[0][i] << ")\n";
-		mOutputs.print();
+		mOutputs->print();
 	}
 }
 
@@ -301,68 +310,67 @@ void testMatrix()
 	std::cout << "\n\nMatrix Test";
 
 	std::cout << "\npMatrix1\n";
-	auto pMatrix1 = Matrix(3, 2);
-	pMatrix1.print();
+	auto* pMatrix1 = new Matrix(3, 2);
+	pMatrix1->print();
 
 	std::cout << "\npMatrix2\n";
-	auto pMatrix2 = Matrix(2, 3);
-	pMatrix2.print();
+	auto* pMatrix2 = new Matrix(2, 3);
+	pMatrix2->print();
 
 	std::cout << "\n\nRandom Matrix Test\n";
 
-	pMatrix1.random(100);
+	pMatrix1->random(100);
 	std::cout << "\npMatrix1.random(100)\n";
-	pMatrix1.print();
+	pMatrix1->print();
 
-	pMatrix1 = pMatrix1.mul(0.10);
+	pMatrix1->mul(0.10);
 	std::cout << "\npMatrix1.mul(0.10)\n";
-	pMatrix1.print();
+	pMatrix1->print();
 
 	NN nn = NN(2, 2, 2);
 	std::function<double()> fnRandomDouble = std::bind(&NN::random, &nn, -2.0, 2.0);
-	pMatrix1.map(fnRandomDouble);
 	std::cout << "\npMatrix1.map(fnRandomDouble);\n";
-	pMatrix1.print();
-	pMatrix1 = pMatrix1.map(fnRandomDouble);
+	pMatrix1->print();
+	pMatrix1 = pMatrix1->map(fnRandomDouble);
 	std::cout << "\npMatrix1 = pMatrix1.map(fnRandomDouble);\n";
-	pMatrix1.print();
+	pMatrix1->print();
 
 	std::cout << "\n\nMatrix Addition Test\n";
 
-	auto mMatrix3 = pMatrix1.add(pMatrix2);
+	Matrix* mMatrix3 = Matrix::add(*pMatrix1, *pMatrix2);
 	std::cout << "\npMatrix1.add(pMatrix2)\nMatrix3 = \n";
-	mMatrix3.print();
+	mMatrix3->print();
 
 	std::cout << "\n\nMatrix Multiplication Test\n";
 
-	auto mMatrix4 = pMatrix2.add(2);
+	auto* mMatrix4 = Matrix::add(*pMatrix2, 2);
 	std::cout << "\npMatrix2.add(2)\nmMatrix4 = \n";
-	mMatrix4.print();
+	mMatrix4->print();
 
-	auto mMatrix5 = pMatrix1.mul(mMatrix4);
+	auto* mMatrix5 = Matrix::mul(*pMatrix1, *mMatrix4);
 	std::cout << "\npMatrix1.mul(mMatrix4)\nmMatrix5 = \n";
-	mMatrix5.print();
+	mMatrix5->print();
 
 	std::cout << "\n\nMatrix Dot Product Test\n";
 
 	std::cout << "\npMatrix1\n";
-	pMatrix1.print();
+	pMatrix1->print();
 	std::cout << std::endl;
-	pMatrix1.showRow(1);
+	pMatrix1->showRow(1);
 	std::cout << std::endl;
 	std::cout << "\nmMatrix6\n";
-	auto mMatrix6 = Matrix(2, 3);
-	mMatrix6.print();
+	auto* mMatrix6 = new Matrix(2, 3);
+	mMatrix6->print();
 	std::cout << "\nmMatrix6.random()\n";
-	mMatrix6.random();
-	mMatrix6.print();
+	mMatrix6->random();
+	mMatrix6->print();
 	std::cout << std::endl;
-	mMatrix6.showCol(1);
+	mMatrix6->showCol(1);
 	std::cout << std::endl;
 
-	auto mMatrix7 = pMatrix1.dot(mMatrix6);
+	auto* mMatrix7 = Matrix::dot(*pMatrix1, *mMatrix6);
 	std::cout << "\npMatrix1.dot(mMatrix6)\nmMatrix7 = \n";
-	mMatrix7.print();
+	mMatrix7->print();
 
 	std::cin;
 	/*

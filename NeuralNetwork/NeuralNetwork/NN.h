@@ -53,20 +53,21 @@ private:
 	int m_iHiddenCount;
 	int m_iOutputCount;
 
-	Matrix m_mInput;
-	Matrix m_mHidden;
-	Matrix m_mOutput;
+	Matrix* m_mInput;
+	Matrix* m_mHidden;
+	Matrix* m_mOutput;
 
-	Matrix m_mWeightsIH;
-	Matrix m_mWeightsHO;
+	Matrix* m_mWeightsIH;
+	Matrix* m_mWeightsHO;
 
-	Matrix m_mBiasH;
-	Matrix m_mBiasO;
+	Matrix* m_mBiasH;
+	Matrix* m_mBiasO;
 
 	std::function<double()> m_fnRandom = std::bind(&NN::random, this, -1.0, 1.0);
 	std::function<double(double)> m_fnSigmoid = std::bind(&NN::sigmoid, this, std::placeholders::_1);
 	std::function<double(double)> m_fnSigmoidDerivative = std::bind(&NN::sigmoidDerivative, this, std::placeholders::_1);
 
+	Matrix* addBias(Matrix& m, Matrix& b);
 };
 
 #endif // !NN_H
